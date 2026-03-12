@@ -5,4 +5,3 @@ export function generateApiKey() {
   return `sk_${randomPart}`;
 }
 
-console.log("Generated API Key:", generateApiKey());
