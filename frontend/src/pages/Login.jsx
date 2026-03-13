@@ -1,9 +1,10 @@
 import { useState } from "react";
+import axios from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-export default function Login() {
 
+function Login() {
   const [formData, setFormData] = useState({
     email: "",
     password: ""
@@ -22,35 +23,41 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(formData)
+      const response = await axios.post(
+        `${BASE_URL}/api/auth/login`,
+        formData,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json"
+          }
+        }
+      );
+
+      const data = response.data;
+
+      setMessage("Login successful!");
+
+      console.log("User:", data.user);
+
+      setFormData({
+        email: "",
+        password: ""
       });
 
-      const data = await res.json();
-
-      if (res.ok) {
-        setMessage("Login successful");
-        console.log("Token:", data.token);
-
-        // Optional: store token
-        localStorage.setItem("token", data.token);
-
+    } catch (error) {
+      if (error.response) {
+        setMessage(error.response.data.message);
       } else {
-        setMessage(data.message || "Login failed");
+        setMessage("Something went wrong");
       }
 
-    } catch (error) {
       console.error(error);
-      setMessage("Server error");
     }
   };
 
   return (
-    <div style={{ width: "350px", margin: "100px auto" }}>
+    <div style={{ width: "400px", margin: "100px auto", fontFamily: "Arial" }}>
       <h2>Login</h2>
 
       <form onSubmit={handleSubmit}>
@@ -62,9 +69,8 @@ export default function Login() {
           value={formData.email}
           onChange={handleChange}
           required
+          style={{ display: "block", width: "100%", marginBottom: "10px", padding: "8px" }}
         />
-
-        <br /><br />
 
         <input
           type="password"
@@ -73,16 +79,21 @@ export default function Login() {
           value={formData.password}
           onChange={handleChange}
           required
+          style={{ display: "block", width: "100%", marginBottom: "10px", padding: "8px" }}
         />
 
-        <br /><br />
-
-        <button type="submit">Login</button>
+        <button
+          type="submit"
+          style={{ padding: "10px", width: "100%", cursor: "pointer" }}
+        >
+          Login
+        </button>
 
       </form>
 
-      <p>{message}</p>
-
+      {message && <p>{message}</p>}
     </div>
   );
 }
+
+export default Login;

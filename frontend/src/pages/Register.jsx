@@ -1,8 +1,9 @@
 import { useState } from "react";
+import axios from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-export default function Register() {
+function Register() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -23,36 +24,43 @@ export default function Register() {
     e.preventDefault();
 
     try {
-      const res = await fetch(`${API_BASE_URL}/api/auth/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(formData)
+      const response = await axios.post(
+        `${BASE_URL}/api/auth/register`,
+        formData,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json"
+          }
+        }
+      );
+
+      const data = response.data;
+
+      setMessage("Registration successful!");
+
+      console.log("API Key:", data.apiKey);
+      console.log("User:", data.user);
+
+      setFormData({
+        name: "",
+        email: "",
+        password: "",
+        companyName: ""
       });
 
-      const data = await res.json();
-
-      if (res.ok) {
-        setMessage("Registration successful");
-        setFormData({
-          name: "",
-          email: "",
-          password: "",
-          companyName: ""
-        });
-      } else {
-        setMessage(data.message || "Registration failed");
-      }
-
     } catch (error) {
-      setMessage("Server error");
+      if (error.response) {
+        setMessage(error.response.data.message);
+      } else {
+        setMessage("Something went wrong");
+      }
       console.error(error);
     }
   };
 
   return (
-    <div style={{ width: "350px", margin: "100px auto" }}>
+    <div style={{ width: "400px", margin: "100px auto", fontFamily: "Arial" }}>
       <h2>Register</h2>
 
       <form onSubmit={handleSubmit}>
@@ -64,9 +72,8 @@ export default function Register() {
           value={formData.name}
           onChange={handleChange}
           required
+          style={{ display: "block", width: "100%", marginBottom: "10px", padding: "8px" }}
         />
-
-        <br /><br />
 
         <input
           type="email"
@@ -75,9 +82,8 @@ export default function Register() {
           value={formData.email}
           onChange={handleChange}
           required
+          style={{ display: "block", width: "100%", marginBottom: "10px", padding: "8px" }}
         />
-
-        <br /><br />
 
         <input
           type="password"
@@ -86,9 +92,8 @@ export default function Register() {
           value={formData.password}
           onChange={handleChange}
           required
+          style={{ display: "block", width: "100%", marginBottom: "10px", padding: "8px" }}
         />
-
-        <br /><br />
 
         <input
           type="text"
@@ -97,15 +102,21 @@ export default function Register() {
           value={formData.companyName}
           onChange={handleChange}
           required
+          style={{ display: "block", width: "100%", marginBottom: "10px", padding: "8px" }}
         />
 
-        <br /><br />
-
-        <button type="submit">Register</button>
+        <button
+          type="submit"
+          style={{ padding: "10px", width: "100%", cursor: "pointer" }}
+        >
+          Register
+        </button>
 
       </form>
 
-      <p>{message}</p>
+      {message && <p>{message}</p>}
     </div>
   );
 }
+
+export default Register;
