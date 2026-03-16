@@ -128,6 +128,12 @@ export default function Dashboard() {
       navigate("/login");
     }
   };
+
+  const handleManageUser = async () => {
+    navigate("/user-management");
+  };
+
+
   // --- Overview ---
   const [overview, setOverview] = useState(null);
   const [overviewLoading, setOverviewLoading] = useState(true);
@@ -205,15 +211,15 @@ export default function Dashboard() {
 
         {/* Logged-in User + Logout */}
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div 
-          onClick={() => setShowProfile(true)}
-          title="View profile"
-          style={{
-            display: "flex", alignItems: "center", gap: 10,
-            background: "#f9fafb", border: "1px solid #e5e7eb",
-            borderRadius: 8, padding: "6px 14px",
-            cursor: "pointer"
-          }}>
+          <div
+            onClick={() => setShowProfile(true)}
+            title="View profile"
+            style={{
+              display: "flex", alignItems: "center", gap: 10,
+              background: "#f9fafb", border: "1px solid #e5e7eb",
+              borderRadius: 8, padding: "6px 14px",
+              cursor: "pointer"
+            }}>
             <div style={{
               width: 28, height: 28, borderRadius: "50%",
               background: "#111827", color: "#fff",
@@ -227,6 +233,22 @@ export default function Dashboard() {
               <div style={{ fontSize: 11, color: "#6b7280", lineHeight: 1.2 }}>{currentUser.role}</div>
             </div>
           </div>
+
+          <button
+            onClick={handleManageUser}
+            style={{
+              padding: "7px 14px", fontSize: 12, fontWeight: 600,
+              background: "#fff", color: "#374151",
+              border: "1px solid #e5e7eb", borderRadius: 7,
+              cursor: "pointer", transition: "all 0.15s"
+            }}
+            onMouseEnter={(e) => { e.target.style.background = "#f9fafb"; e.target.style.borderColor = "#d1d5db"; }}
+            onMouseLeave={(e) => { e.target.style.background = "#fff"; e.target.style.borderColor = "#e5e7eb"; }}
+          >
+            Manage User
+          </button>
+
+
           <button
             onClick={handleLogout}
             style={{
@@ -240,6 +262,10 @@ export default function Dashboard() {
           >
             Logout
           </button>
+
+
+
+
         </div>
       </header>
 
