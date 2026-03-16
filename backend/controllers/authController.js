@@ -15,8 +15,6 @@ const sendTokenCookie = (res, token) => {
   });
 };
 
-
-
 // @route   POST /api/auth/register
 export const register = async (req, res) => {
   try {
@@ -77,8 +75,6 @@ export const register = async (req, res) => {
   }
 };
 
-
-
 // @route   POST /api/auth/login
 export const login = async (req, res) => {
   try {
@@ -125,8 +121,6 @@ export const login = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
-
 
 // @route   POST /api/auth/logout
 export const logout = async (req, res) => {

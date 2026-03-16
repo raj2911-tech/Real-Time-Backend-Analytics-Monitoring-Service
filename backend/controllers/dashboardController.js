@@ -1,7 +1,8 @@
 import User from "../models/User.js";
 import Tenant from "../models/Tenant.js";
 import RequestLog from "../models/RequestLog.js";
-import AggregatedMetric from "../models/AggregatedMetric.js";   
+import AggregatedMetric from "../models/AggregatedMetric.js";
+import bcrypt from "bcryptjs";
 
 
 // @route   GET /api/dashboard/overview
@@ -134,6 +135,96 @@ export const getProfile = async (req, res) => {
 
   } catch (error) {
     console.error("Get profile error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// @route   GET /api/dashboard/user-management
+export const userManagement = async (req, res) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ message: "Unauthorized" });
+  }
+
+  try {
+    const tenantId = req.user.tenantId;
+
+    const users = await User.find({ tenantId })
+      .select("_id name email role createdAt")
+      .lean();
+
+    res.status(200).json(users);
+
+  } catch (error) {
+    console.error("User Management error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// @route   POST /api/dashboard/user-management/add
+export const addUser = async (req, res) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ message: "Unauthorized" });
+  }
+
+  try {
+    const tenantId = req.user.tenantId;
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "Name, Email and Password required" });
+    }
+
+    const existingUser = await User.findOne({ email, tenantId });
+
+    if (existingUser) {
+      return res.status(409).json({ message: "User already exists" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = await User.create({
+      tenantId,
+      name,
+      email,
+      password: hashedPassword
+    });
+
+    res.status(201).json({
+      message: "User Created Successfully",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
+
+  } catch (error) {
+    console.error("User Creation error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// @route   POST /api/dashboard/user-management/delete
+export const deleteUser = async (req, res) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ message: "Unauthorized" });
+  }
+
+  try {
+    const { id } = req.params;
+    const tenantId = req.user.tenantId;
+
+    const user = await User.findOneAndDelete({ _id: id, tenantId });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ message: "User Deleted Successfully" });
+
+  } catch (error) {
+    console.error("User Deletion error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
