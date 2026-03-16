@@ -110,3 +110,30 @@ export const getRecentRequests = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+// @route   GET /api/dashboard/profile
+export const getProfile = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const tenantId = req.user.tenantId;
+
+    const user = await User.findById(userId).select("name email role createdAt");
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const tenant = await Tenant.findById(tenantId).select("companyName apiKey");
+    if (!tenant) return res.status(404).json({ message: "Tenant not found" });
+
+    res.status(200).json({
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      createdAt: user.createdAt,
+      companyName: tenant.companyName,
+      apiKey: tenant.apiKey,
+    });
+
+  } catch (error) {
+    console.error("Get profile error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Profile from "../components/Profile.jsx";
 
 const API_BASE = "http://localhost:3000/api/dashboard";
 const OPTS = { credentials: "include" };
 
-const stored = localStorage.getItem("user");
-const CURRENT_USER = stored ? JSON.parse(stored) : { name: "User", role: "—" };
+
 
 const STATUS_COLOR = (code) => {
   if (code >= 500) return "#dc2626";
@@ -97,14 +97,34 @@ const MethodBadge = ({ method }) => (
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const [showProfile, setShowProfile] = useState(false);
+
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const stored = localStorage.getItem("user");
+      return stored ? JSON.parse(stored) : { name: "User", role: "—" };
+    } catch {
+      return { name: "User", role: "—" };
+    }
+  });
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("user");
+      setCurrentUser(stored ? JSON.parse(stored) : { name: "User", role: "—" });
+    } catch {
+      setCurrentUser({ name: "User", role: "—" });
+    }
+  }, []);
 
   const handleLogout = async () => {
     try {
-      await fetch(`/api/auth/logout`, { method: "POST", credentials: "include" });
+      await fetch(`https://localhost:3000/api/auth/logout`, { method: "POST", credentials: "include" });
     } catch (e) {
       console.error("Logout failed:", e);
     } finally {
       localStorage.removeItem("user");
+      setCurrentUser({ name: "User", role: "—" });
       navigate("/login");
     }
   };
@@ -185,10 +205,14 @@ export default function Dashboard() {
 
         {/* Logged-in User + Logout */}
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{
+          <div 
+          onClick={() => setShowProfile(true)}
+          title="View profile"
+          style={{
             display: "flex", alignItems: "center", gap: 10,
             background: "#f9fafb", border: "1px solid #e5e7eb",
-            borderRadius: 8, padding: "6px 14px"
+            borderRadius: 8, padding: "6px 14px",
+            cursor: "pointer"
           }}>
             <div style={{
               width: 28, height: 28, borderRadius: "50%",
@@ -196,11 +220,11 @@ export default function Dashboard() {
               display: "flex", alignItems: "center", justifyContent: "center",
               fontSize: 12, fontWeight: 700
             }}>
-              {CURRENT_USER.name.split(" ").map((n) => n[0]).join("")}
+              {(currentUser.name || "User").split(" ").map((n) => n[0]).join("")}
             </div>
             <div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: "#111827", lineHeight: 1.2 }}>{CURRENT_USER.name}</div>
-              <div style={{ fontSize: 11, color: "#6b7280", lineHeight: 1.2 }}>{CURRENT_USER.role}</div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#111827", lineHeight: 1.2 }}>{currentUser.name}</div>
+              <div style={{ fontSize: 11, color: "#6b7280", lineHeight: 1.2 }}>{currentUser.role}</div>
             </div>
           </div>
           <button
@@ -315,6 +339,8 @@ export default function Dashboard() {
         </SectionWrapper>
 
       </main>
+
+      {showProfile && <Profile onClose={() => setShowProfile(false)} />}
 
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
