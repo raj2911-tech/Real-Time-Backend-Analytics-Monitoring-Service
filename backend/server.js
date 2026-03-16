@@ -3,6 +3,7 @@ import dotenv from "dotenv"
 import connectDB  from "./config/db.js"
 import authRouter from "./routes/authRoutes.js"
 import analyticsRoutes from "./routes/analyticsRoutes.js";
+import dashboardRoutes from "./routes/dashboardRoutes.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
@@ -21,8 +22,10 @@ app.use(
   })
 );
 app.use(cookieParser());
+
 app.use("/api/auth", authRouter)
 app.use("/api/analytics", analyticsRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 app.get("/", (req, res) => {
   res.send("Analytics SaaS API Running")  
