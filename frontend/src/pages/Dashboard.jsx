@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Profile from "../components/Profile.jsx";
 
-const API_BASE = "http://localhost:3000/api/dashboard";
+const API_BASE = "http://localhost:7000/api/dashboard";
 const OPTS = { credentials: "include" };
 
 
@@ -119,7 +119,7 @@ export default function Dashboard() {
 
   const handleLogout = async () => {
     try {
-      await fetch(`https://localhost:3000/api/auth/logout`, { method: "POST", credentials: "include" });
+      await fetch(`https://localhost:7000/api/auth/logout`, { method: "POST", credentials: "include" });
     } catch (e) {
       console.error("Logout failed:", e);
     } finally {
