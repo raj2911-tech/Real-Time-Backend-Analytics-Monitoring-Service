@@ -296,6 +296,12 @@ Body:
 * Advanced filtering and search
 
 ---
+## 🎥 Project Demo
+
+Watch the full demo here:  
+<>
+
+---
 
 ## Author
 
