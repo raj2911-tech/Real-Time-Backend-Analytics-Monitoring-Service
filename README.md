@@ -211,6 +211,16 @@ x-api-key: YOUR_API_KEY
 * Protected routes using middleware
 
 ---
+## Screenshots
+
+
+![Login](screenshots/Login.png)
+![API](screenshots/Api.png)
+![Dashboard Upper](screenshots/Dashboard_upper.png)
+![Dashboard Lower](screenshots/Dashboard_lower.png)
+![Profile](screenshots/Profile.png)
+![User Management](screenshots/User_Management.png)
+
 
 ## Getting Started
 
@@ -294,4 +304,4 @@ B.Tech Student | Full-Stack Developer
 
 📧 Email: raj317073b@gmail.com  
 🔗 GitHub: https://github.com/raj2911-tech  
-🔗 LinkedIn: https://linkedin.com/in/raj-ghoniya-106506283 
+🔗 LinkedIn: https://linkedin.com/in/raj-ghoniya-106506283
